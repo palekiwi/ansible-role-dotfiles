@@ -1,0 +1,69 @@
+---
+- name: Check if dotfiles directory exists.
+  ansible.builtin.stat:
+    path: "{{ dotfiles_repo_local_dest }}"
+  register: df_path
+
+- name: Ensure dotfiles repository is cloned locally.
+  when: "not df_path.stat.exists"
+  ansible.builtin.git:
+    repo: "{{ dotfiles_repo }}"
+    dest: "{{ dotfiles_repo_local_dest }}"
+    version: "{{ dotfiles_repo_version }}"
+    accept_hostkey: "{{ dotfiles_repo_accept_hostkey }}"
+
+- name: Ensure all configured dotfiles are links.
+  ansible.builtin.command:
+    cmd: "ls -F {{ item.dir }}/{{ item.filename }}"
+  loop: "{{ dotfiles_files }}"
+  changed_when: false
+  check_mode: false
+  failed_when: false
+  register: existing_dotfiles_info
+
+- name: Remove existing file if a replacement is being linked.
+  ansible.builtin.file:
+    path: "{{ dotfiles_files[index]['dir'] }}/{{ dotfiles_files[index]['filename'] }}"
+    state: absent
+  when: "'@' not in item['stdout']"
+  loop: "{{ existing_dotfiles_info.results }}"
+  loop_control:
+    index_var: index
+
+- name: Create links.
+  block:
+    - name: Ensure all directories exist.
+      ansible.builtin.file:
+        path: "{{ item.dir }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ dotfiles_files }}"
+
+    - name: Link dotfiles.
+      ansible.builtin.file:
+        src: "{{ dotfiles_repo_local_dest }}/{{ item.src }}"
+        dest: "{{ item.dir }}/{{ item.filename }}"
+        state: link
+      loop: "{{ dotfiles_files }}"
+
+    - name: Remove old dotfiles_record.
+      ansible.builtin.file:
+        path: "{{ dotfiles_record }}"
+        state: absent
+
+    - name: Save dotfiles paths to {{ dotfiles_record }}.
+      ansible.builtin.lineinfile:
+        path: "{{ dotfiles_record }}"
+        create: true
+        mode: "0644"
+        regexp: "^{{ item.label }}"
+        line: "{{ item.label }} {{ item.dir }}/{{ item.filename }}"
+      loop: "{{ dotfiles_files }}"
+
+- name: Clone extra repos.
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+    depth: 1
+    version: "{{ item.version }}"
+  loop: "{{ dotfiles_extra_repos }}"

@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include palekiwi.dotfiles"
+      ansible.builtin.include_role:
+        name: "palekiwi.dotfiles"
