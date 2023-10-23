@@ -38,6 +38,7 @@
         state: directory
         mode: "0755"
       loop: "{{ dotfiles_files }}"
+      tags: mkdir
 
     - name: Link dotfiles.
       ansible.builtin.file:
@@ -45,20 +46,15 @@
         dest: "{{ item.dir }}/{{ item.filename }}"
         state: link
       loop: "{{ dotfiles_files }}"
+      tags: link
 
-    - name: Remove old dotfiles_record.
-      ansible.builtin.file:
-        path: "{{ dotfiles_record }}"
-        state: absent
-
-    - name: Save dotfiles paths to {{ dotfiles_record }}.
-      ansible.builtin.lineinfile:
-        path: "{{ dotfiles_record }}"
-        create: true
+    - name: Install dotfiles template.
+      ansible.builtin.template:
+        src: templates/dotfiles.j2
+        dest: ~/.dotfiles
         mode: "0644"
-        regexp: "^{{ item.label }}"
-        line: "{{ item.label }} {{ item.dir }}/{{ item.filename }}"
-      loop: "{{ dotfiles_files }}"
+        force: true
+      tags: template
 
 - name: Clone extra repos.
   ansible.builtin.git:
