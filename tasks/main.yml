@@ -14,7 +14,7 @@
 
 - name: Ensure all configured dotfiles are links.
   ansible.builtin.command:
-    cmd: "ls -F {{ item.dir }}/{{ item.filename }}"
+    cmd: "ls -F {{ item.dest }}"
   loop: "{{ dotfiles_files }}"
   changed_when: false
   check_mode: false
@@ -23,7 +23,7 @@
 
 - name: Remove existing file if a replacement is being linked.
   ansible.builtin.file:
-    path: "{{ dotfiles_files[index]['dir'] }}/{{ dotfiles_files[index]['filename'] }}"
+    path: "{{ dotfiles_files[index]['dest'] }}"
     state: absent
   when: "'@' not in item['stdout']"
   loop: "{{ existing_dotfiles_info.results }}"
@@ -34,7 +34,7 @@
   block:
     - name: Ensure all directories exist.
       ansible.builtin.file:
-        path: "{{ item.dir }}"
+        path: "{{ item.dest | dirname }}"
         state: directory
         mode: "0755"
       loop: "{{ dotfiles_files }}"
@@ -43,7 +43,7 @@
     - name: Link dotfiles.
       ansible.builtin.file:
         src: "{{ dotfiles_repo_local_dest }}/{{ item.src }}"
-        dest: "{{ item.dir }}/{{ item.filename }}"
+        dest: "{{ item.dest }}"
         state: link
       loop: "{{ dotfiles_files }}"
       tags: link
