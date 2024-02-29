@@ -50,7 +50,7 @@
 
     - name: Ensure dotfiles template directory exists.
       ansible.builtin.file:
-        path: "{{ dotfiles_record | dirname }}"
+        path: "{{ dotfiles_record_dir }}"
         state: directory
         mode: "0755"
       tags: template
@@ -58,7 +58,7 @@
     - name: Install dotfiles template.
       ansible.builtin.template:
         src: templates/dotfiles.j2
-        dest: "~/.dotfiles.d/{{ ansible_hostname }}"
+        dest: "{{ dotfiles_record_dir }}/{{ ansible_hostname }}"
         mode: "0644"
         force: true
       tags: template
