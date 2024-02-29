@@ -58,7 +58,7 @@
     - name: Install dotfiles template.
       ansible.builtin.template:
         src: templates/dotfiles.j2
-        dest: "{{ dotfiles_record }}"
+        dest: "~/.dotfiles.d/{{ ansible_hostname }}"
         mode: "0644"
         force: true
       tags: template

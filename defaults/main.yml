@@ -1,11 +1,8 @@
 ---
-# dotfiles_repo: https://github.com/dhammafarer/dotfiles
-dotfiles_repo: git@github.com:dhammafarer/dotfiles
+dotfiles_repo: git@github.com:palekiwi/dotfiles
 dotfiles_repo_local_dest: ~/dotfiles
 dotfiles_repo_version: main
 dotfiles_repo_accept_hostkey: true
-
-dotfiles_record: "~/.dotfiles"
 
 dotfiles_files:
   - { dir: "~", filename: ".bashrc", src: "fedora/bashrc", label: "bashrc" }
