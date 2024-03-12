@@ -20,6 +20,8 @@
   check_mode: false
   failed_when: false
   register: existing_dotfiles_info
+  loop_control:
+    label: "{{ item.dest }}"
 
 - name: Remove existing file if a replacement is being linked.
   ansible.builtin.file:
@@ -29,6 +31,7 @@
   loop: "{{ existing_dotfiles_info.results }}"
   loop_control:
     index_var: index
+    label: "{{ item.stdout }}"
 
 - name: Create links.
   block:
@@ -38,6 +41,8 @@
         state: directory
         mode: "0755"
       loop: "{{ dotfiles_files }}"
+      loop_control:
+        label: "{{ item.dest }}"
       tags: mkdir
 
     - name: Link dotfiles.
@@ -46,6 +51,8 @@
         dest: "{{ item.dest }}"
         state: link
       loop: "{{ dotfiles_files }}"
+      loop_control:
+        label: "{{ item.dest }}"
       tags: link
 
     - name: Ensure dotfiles template directory exists.

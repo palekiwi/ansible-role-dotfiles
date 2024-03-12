@@ -6,11 +6,7 @@ dotfiles_repo_accept_hostkey: true
 dotfiles_record_dir: ~/.dotfiles.d
 
 dotfiles_files:
-  - { dir: "~", filename: ".bashrc", src: "fedora/bashrc", label: "bashrc" }
-  - { dir: "~", filename: ".zshrc", src: "arch/zshrc", label: "zshrc" }
-  - { dir: "~", filename: ".aliases", src: "arch/aliases", label: "aliases" }
-  - { dir: "~", filename: ".npmrc", src: "arch/npmrc", label: "npmrc" }
-  - { dir: "~", filename: ".gitconfig", src: "arch/gitconfig", label: "gitconfig" }
-  - { dir: "~", filename: ".gitignore", src: "arch/gitignore", label: "gitignore" }
+  - { dest: "~/.bashrc", src: "fedora/bashrc", label: "bashrc" }
+  - { dest: "~/.zshrc", src: "arch/zshrc", label: "zshrc" }
 
 dotfiles_extra_repos: []

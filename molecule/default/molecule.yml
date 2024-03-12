@@ -5,7 +5,7 @@ driver:
   name: podman
 platforms:
   - name: instance
-    image: registry.fedoraproject.org/fedora-toolbox:37
+    image: registry.fedoraproject.org/fedora-toolbox:39
     pre_build_image: true
 provisioner:
   name: ansible

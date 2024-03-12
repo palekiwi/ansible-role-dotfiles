@@ -5,3 +5,5 @@
     - name: "Include palekiwi.dotfiles"
       ansible.builtin.include_role:
         name: "palekiwi.dotfiles"
+      vars:
+        dotfiles_repo: https://github.com/palekiwi/dotfiles
